@@ -53,6 +53,18 @@ module Neo4jr
         node.get_relationships.each { |r| r.delete }
         node.delete
       end
+    end        
+    
+    describe "Deletes the specified relationship, where :node_id is the value of the identifier property of the source node,  of the relationship"
+    required_param :to, 'This is the target node of the relationship'
+    required_param :type, ' This is the type fo the relationship, i.e. friends'
+    delete '/nodes/:node_id/relationships' do  
+      Neo4jr::DB.execute do |neo|
+        node = neo.find_node(param_node_id) 
+        target_node = neo.find_node(param_to_node_id)  
+        relationship = node.get_relationships(relationship_type.to_a).find {|r| r if r.to == target_node.id }     
+        relationship.delete
+      end   
     end
 
     describe "Returns relationships to other nodes for the specified node, where :node_id is the value of the identifier propery of the node or if no identifier is specified you can use the numeric neo4j id."
